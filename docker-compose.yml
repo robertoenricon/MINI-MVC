@@ -1,0 +1,17 @@
+version: "3.0"
+services:
+  www:
+    build: .
+    ports:
+      - "80:80"
+    volumes:
+      - ./www:/var/www/html
+  db:
+    image: mysql:5.7
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./db_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: 12345
+      MYSQL_DATABASE: docker_database
