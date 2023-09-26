@@ -1,17 +1,40 @@
-version: "3.0"
+version: '3'
 services:
-  www:
-    build: .
+
+  #PHP Service
+  app:
+    build:
+      context: .
+      #dockerfile: docker/php/Dockerfile
+    container_name: enrictips_app
+    restart: unless-stopped
+    tty: true
+    working_dir: /var/www
     ports:
       - "80:80"
     volumes:
-      - ./www:/var/www/html
+      - ./:/var/www
+      - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+      - ~/.ssh:/root/.ssh-local:ro
+
+  #MySQL Service
   db:
     image: mysql:5.7
+    container_name: enrictips_db
+    restart: unless-stopped
+    tty: true
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+      TZ: America/Sao_Paulo
     ports:
       - "3306:3306"
     volumes:
       - ./db_data:/var/lib/mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: 12345
-      MYSQL_DATABASE: docker_database
+
+volumes:
+  data-volume:
